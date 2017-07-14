@@ -1,0 +1,5 @@
+rails g migration AddCategoryReferenceToProducts category:references
+
+rails g migration AddProductReferenceToReviews category:references
+
+rails g migration addPasswordDigestToUsers
