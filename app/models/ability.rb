@@ -12,6 +12,10 @@ class Ability
       p.user_id == user.id
     end
 
+    can :manage, Review do |r|
+      r.user_id == user.id
+    end
+
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)
