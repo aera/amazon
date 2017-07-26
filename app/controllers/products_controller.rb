@@ -4,11 +4,13 @@ class ProductsController < ApplicationController
   before_action :authorize_user!, only: [:edit, :destroy, :update]
 
   def index
-    @products = Product.order(id: :desc).limit(100)
+     @products = Product.order(created_at: :desc).limit(100)
   end
 
   def show
     @review = Review.new
+    @like = @review.likes.find_by(user: current_user)
+    @favourite = @product.favourites.find_by(user: current_user)
   end
 
   def new
@@ -17,10 +19,11 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
+    @product.user = current_user
 
     if @product.save
       flash[:notice] = "Product created successfully"
-      redirect_to @product
+      redirect_to product_path(@product)
     else
       flash[:alert] = "Problem creating your product"
       render :new
@@ -28,7 +31,7 @@ class ProductsController < ApplicationController
   end
 
   def edit
-    redirect_to products_path, alert: "access unauthorized" unless can? :edit, @product
+    redirect_to products_path, alert: "Access unauthorized" unless can? :edit, @product   #.edit(product_params)
   end
 
   def update
@@ -42,17 +45,20 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    @product.destroy
-    flash[:notice] = "Product successfully deleted."
-    redirect_to products_path, alert: "access unauthorized" unless can? :delete, @product
-
-    redirect_to products_path
+    if can? :destroy, @product
+      @product.destroy
+      flash[:notice] = "Product sucessfully deleted."
+      redirect_to products_path
+    else
+      flash[:alert] = "Access Denied. you cannot delete a product that is not yours"
+      redirect_to @product
+    end
   end
 
   private
 
   def product_params
-    params.require(:product).permit(:title, :description, :price, :category_id)
+    params.require(:product).permit(:title, :description, :price, :category_id, :tag_list)
   end
 
   def find_product

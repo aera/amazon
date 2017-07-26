@@ -12,9 +12,17 @@ class Ability
       p.user_id == user.id
     end
 
+    can :favourite, Product do |p|
+  	  p.user_id != user.id
+  	end
+
     can :manage, Review do |r|
       r.user_id == user.id
     end
+
+    can :like, Review do |r|
+  	    r.user != user
+  	end
 
     # Define abilities for the passed in user here. For example:
     #

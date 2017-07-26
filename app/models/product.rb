@@ -1,6 +1,14 @@
 class Product < ApplicationRecord
   belongs_to :category
+  belongs_to :user
+  
+  has_many :taggings, dependent: :destroy
+  has_many :tags, through: :taggings
+
   has_many :reviews, dependent: :destroy
+
+  has_many :favourites, dependent: :destroy
+  has_many :favouriters, through: :favourites, source: :user
 
   validates :title, {presence: true, uniqueness: {case_sensitive: false},
     exclusion: {in: %w(Apple Microsoft Sony), message: "%{value} is reserved."}}
@@ -22,6 +30,19 @@ class Product < ApplicationRecord
 
   def self.search(query)
     where("title ILIKE ? OR description ILIKE ?", "%#{query}%", "%#{query}%").order(:title, :description)
+  end
+
+  # Reading
+  def tag_list
+    #tags.map { |tag| tag.name}
+    tags.map(&:name).join(', ')
+  end
+
+  # Setting
+  def tag_list=(value)
+    self.tags = value.split(/\s*,\s*/).map do |name|
+      Tag.where(name: name.downcase).first_or_create!
+    end
   end
 
   private

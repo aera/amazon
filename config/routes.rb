@@ -7,8 +7,23 @@ Rails.application.routes.draw do
   get('/contact', {to: 'contact#new'})
   post('/contact', {to: 'contact#create'})
 
-  resources :products do
-    resources :reviews
+  #resources :products do
+  #  resources :reviews
+  #end
+  #resources :favourites, only: [:create, :destroy]
+
+
+
+  resources :products, shallow: true do
+    resources :favourites, only: [:create, :destroy]
+    resources :reviews do
+      resources :likes
+    end
+
+  end
+
+  resources :reviews do
+    resources :likes
   end
 
 

@@ -2,12 +2,25 @@
 <p><%= @product.description %></p>
 <p>$<%= @product.price %></p>
 <p>Category: <%= @product.category.name %></p>
+<p><strong>Tags: </strong> <%= @product.tag_list %></p>
 <p>Contributor: <%= (User.find_by_id(@product.user_id)).full_name %></p>
-<hr>
-<!-- <p><strong>Contributor: </strong> <%#= @product.user&.full_name %></p> -->
+<hr style="background:#DDDDDD; border:0; height:7px" />
+
 <%= link_to 'Edit', edit_product_path(@product) %>
 <%= link_to 'Destroy', product_path(@product), method: :delete %>
+<!-- <p><strong>Contributor: </strong> <%#= @product.user&.full_name %></p> -->
+<div class="favourite-widget">
+  <% if user_signed_in? && can?(:favourite, @product) %>
+    <% if @favourite.present? %>
+      <%= link_to fa_icon('thumbs-down lg'), favourite_path(@product, @favourite), method: :delete %>
+    <% else %>
+      <%= link_to fa_icon('thumbs-up lg'), product_favourites_path(@product), method: :post %>
+    <% end %>
+  <% end %>
+  <%= pluralize @product.favourites.count, 'favourite' %>
+</div>
 
+<hr style="background:#DDDDDD; border:0; height:7px" />
 <div>
   <h3>Add a Review </h3>
   <%= form_for([@product, @review]) do |f| %>
@@ -22,17 +35,30 @@
     <%= f.submit %>
   <% end %>
 </div>
-
+<hr style="background:#F87431; border:0; height:7px" />
 <div>
   <% @product.reviews.each do |review| %>
     <div>
       <p><%= review.body %></p>
+      <div class="like-widget">
+        <% if user_signed_in? && can?(:like, review) %>
+          <% if review.likes.find_by_user_id(current_user).present? %>
+            <%= link_to fa_icon('heart-o lg'), review_like_path(review, review.likes.where(user: current_user).first), method: :delete %>
+          <% else %>
+            <%= link_to fa_icon('heart lg'), review_likes_path(review), method: :post %>
+
+            (<%= pluralize review.likes.count, 'like' %>)
+
+          <% end %>
+        <% end %>
+      </div>
       <p>Rating: <%= review.rating %></p>
 
       <p>Commentor: <%= User.find_by_id(review.user_id).full_name %></p>
-      <p><%= link_to 'Delete', product_review_path(@product, review),
+      <p><%= link_to 'Delete', review_path(@product, review),
               method: :delete, data: { confirm: 'Are you sure?'} %>
       </p>
     </div>
+    <hr style="background:#F87431; border:0; height:7px" />
   <% end %>
 </div>

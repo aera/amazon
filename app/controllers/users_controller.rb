@@ -11,6 +11,7 @@ class UsersController < ApplicationController
       flash[:notice] = 'User Successfully Created'
       redirect_to home_path
     else
+      flash[:alert] = 'Invalid User Account'
       render :new
     end
   end
