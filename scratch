@@ -3,3 +3,20 @@ rails g migration AddCategoryReferenceToProducts category:references
 rails g migration AddProductReferenceToReviews category:references
 
 rails g migration addPasswordDigestToUsers
+
+
+
+class CreateVotes < ActiveRecord::Migration[5.1]
+  def change
+    create_table :votes do |t|
+      t.references :user, foreign_key: true, index: true
+      t.references :review, foreign_key: true, index: true
+      t.boolean :is_up
+
+      t.timestamps
+    end
+  end
+end
+
+
+#db/migrate/20170726230921_create_votes.rb

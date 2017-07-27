@@ -48,7 +48,7 @@ tags = Tag.all
 
   p = Product.create(
     title: Faker::Book.title,
-    description: Faker::Hipster.sentence,
+    description: Faker::TwinPeaks.quote,
     price: Faker::Commerce.price,
     category_id: category.id,
     user_id: (User.all.sample).id
@@ -72,4 +72,8 @@ end
 
 
 
-puts "#{Product.count} products created!"
+puts Cowsay.say("Created #{users.count} users", :tux)
+puts Cowsay.say("Created #{products.count} products", :cow)
+puts Cowsay.say("Created #{tags.count} tags", :stimpy)
+puts Cowsay.say("Created #{Like.count} likes", :sheep)
+puts Cowsay.say("Created #{Review.count} answers", :ghostbusters)

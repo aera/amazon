@@ -38,18 +38,47 @@
 <hr style="background:#F87431; border:0; height:7px" />
 <div>
   <% @product.reviews.each do |review| %>
+    <div class="voting-widget">
+      <% vote = review.votes.find_by(user: current_user) %>
+      <% if vote.nil? %>
+        <%= link_to fa_icon('arrow-up'),
+          review_votes_path(review,  {is_up: true}),
+          method: :post %>
+        <div><%= review.vote_total %></div>
+        <%= link_to fa_icon('arrow-down'),
+          review_votes_path(review,  {is_up: false}),
+          method: :post %>
+      <% elsif vote.is_up? %>
+        <%= link_to fa_icon('arrow-up'),
+          vote_path(vote),
+          method: :delete,
+          class: 'active' %>
+        <div><%= review.vote_total %></div>
+        <%= link_to fa_icon('arrow-down'),
+          vote_path(vote, {is_up: false}),
+          method: :patch %>
+      <% else %>
+        <%= link_to fa_icon('arrow-up'),
+          vote_path(vote, {is_up: true}),
+          method: :patch %>
+        <div><%= review.vote_total %></div>
+        <%= link_to fa_icon('arrow-down'),
+          vote_path(vote),
+          method: :delete,
+          class: 'active' %>
+      <% end %>
+    </div>
+
     <div>
       <p><%= review.body %></p>
       <div class="like-widget">
         <% if user_signed_in? && can?(:like, review) %>
           <% if review.likes.find_by_user_id(current_user).present? %>
-            <%= link_to fa_icon('heart-o lg'), review_like_path(review, review.likes.where(user: current_user).first), method: :delete %>
+            <%= link_to fa_icon('heart lg'), review_like_path(review, review.likes.where(user: current_user).first), method: :delete %>
           <% else %>
-            <%= link_to fa_icon('heart lg'), review_likes_path(review), method: :post %>
-
-            (<%= pluralize review.likes.count, 'like' %>)
-
+            <%= link_to fa_icon('heart-o lg'), review_likes_path(review), method: :post %>
           <% end %>
+          (<%= pluralize review.likes.count, 'like' %>)
         <% end %>
       </div>
       <p>Rating: <%= review.rating %></p>

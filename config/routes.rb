@@ -21,6 +21,11 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :reviews, only: [], shallow: true do
+    resources :votes, only: [:create, :destroy, :update]
+  end
+
+
   resources :tags, only: [:index, :show]
 
   resources :reviews do

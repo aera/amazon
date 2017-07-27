@@ -17,3 +17,26 @@
 
  @import "bootstrap-sprockets";
  @import "bootstrap";
+
+ .voting-widget {
+    width: 75px;
+    flex-shrink: 0;
+    display: flex;
+    flex-flow: column;
+    align-items:center;
+    justify-content: center;
+  }
+
+  .voting-widget a.active > i {
+    color: LightBlue;
+  }
+
+  .review-list {
+     list-style: none;
+     padding-left: 0;
+  }
+
+  .review-list> li {
+     display: flex;
+     margin: 10px 0;
+  }
